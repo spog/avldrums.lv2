@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+
+# Set to 1 to enable verbose mode. DH_VERBOSE has priority over DH_QUIET.
+#export DH_VERBOSE=1
+
+# Set to 1 to enable quiet mode.
+#export DH_QUIET=1
+
+# This is the debhelper compatibility version to use.
+#export DH_COMPAT=11
+
+# Set to 1 to enable no-act mode.
+#export DH_NO_ACT=1
+
+%:
+	dh $@
+
+override_dh_update_autotools_config:
+
+override_dh_auto_configure:
+
+override_dh_auto_clean:
+	make clean
+
