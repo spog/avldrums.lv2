@@ -16,7 +16,7 @@ STRIP  ?= strip
 
 BUILDOPENGL?=yes
 
-avldrums_VERSION?=$(shell git describe --tags HEAD 2>/dev/null | sed 's/-g.*$$//;s/^v//' || echo "LV2")
+avldrums_VERSION?=$(shell git describe --tags HEAD 2>/dev/null | sed 's/upstream\///;s/-g.*$$//;s/^v//;s/\(.*\)\..*/\1/' || echo "LV2")
 RW ?= robtk/
 
 ###############################################################################
