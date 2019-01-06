@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Samo Pogačnik <samo_pogacnik@t-2.net>
 Build-Depends: debhelper (>= 11), pkg-config, 
  libgl1-mesa-dev, libglu1-mesa-dev, libcairo2-dev, libpango1.0-dev,
- libglib2.0-dev, gmake, lv2-dev
+ libglib2.0-dev, lv2-dev
 Standards-Version: 4.1.4
 
 Package: avldrums-lv2

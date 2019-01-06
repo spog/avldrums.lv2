@@ -1,2 +1,9 @@
+avldrums-lv2 (0.3.2.2-1~1.gbpa483c4) UNRELEASED; urgency=medium
 
+  ** SNAPSHOT build @a483c4f210331eaa7456a6adcab2aaa7e2a53dc2 **
 
+  *
+  * Changed Makefile to understand upstream tags.
+  * Changed Makefile to handle debian/upstream tags.
+
+ -- Samo Pogačnik <samo_pogacnik@t-2.net>  Sun, 06 Jan 2019 19:25:01 +0100
