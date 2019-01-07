@@ -21,12 +21,12 @@ Description: AVLDrumkits LV2 Plugin
  .
  The main benefits compared to loading the soundfont into a generic sample
  player are:
- * built-in MIDNAM: The plugin informs the host about note-names
- * Semantic grouping of ports: fan-out separate mics to individual tracks
- * Compatible stereo/multi-out variant: Allows to in-place replace the stereo
-   version with multi-out. Start with stereo when sequencing and when moving
-   to the mixing stage use separate outputs to process or customize level and
-   pan of individual drums.
+  * built-in MIDNAM: The plugin informs the host about note-names
+  * Semantic grouping of ports: fan-out separate mics to individual tracks
+  * Compatible stereo/multi-out variant: Allows one to in-place replace the
+    stereo version with multi-out. Start with stereo when sequencing and when
+    moving to the mixing stage use separate outputs to process or customize
+    level and pan of individual drums.
  .
  WWW: https://x42-plugins.com/x42/x42-avldrums
 

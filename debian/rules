@@ -12,6 +12,8 @@
 # Set to 1 to enable no-act mode.
 #export DH_NO_ACT=1
 
+export PREFIX=/usr
+
 %:
 	dh $@
 
@@ -22,6 +24,6 @@ override_dh_auto_configure:
 override_dh_auto_clean:
 
 override_dh_clean:
-	make clean
+	dh_clean
 	make submodules
 
