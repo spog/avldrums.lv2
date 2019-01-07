@@ -1,9 +1,11 @@
-avldrums-lv2 (0.3.2.2-1~1.gbpa483c4) UNRELEASED; urgency=medium
+avldrums-lv2 (0.3.2.5-1) bionic; urgency=low
 
-  ** SNAPSHOT build @a483c4f210331eaa7456a6adcab2aaa7e2a53dc2 **
-
-  *
   * Changed Makefile to understand upstream tags.
   * Changed Makefile to handle debian/upstream tags.
+  * Initial debian build changes.
+  * Get version from changelog for debian build.
+  * Added README as a copy of README.md
+  * Ramoved unnecessary file.
+  * Fixed first snapshot build.
 
- -- Samo Pogačnik <samo_pogacnik@t-2.net>  Sun, 06 Jan 2019 19:25:01 +0100
+ -- Samo Pogačnik <samo_pogacnik@t-2.net>  Mon, 07 Jan 2019 19:01:38 +0100
