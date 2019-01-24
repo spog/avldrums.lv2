@@ -156,11 +156,23 @@ override CFLAGS += -fPIC -fvisibility=hidden
 else
 override CFLAGS += -DPTW32_STATIC_LIB
 endif
-override LOADLIBES += `pkg-config $(PKG_UI_FLAGS) --libs glib-2.0`
 
+STATICDIR=staticdir/
+STATICGLIBNAME=libglib-2.0.a
+STATICGLIB=$(STATICDIR)$(STATICGLIBNAME)
+#orig:override LOADLIBES += `pkg-config $(PKG_UI_FLAGS) --libs glib-2.0`
+override LOADLIBES += -Wl,--strip-discarded -Wl,-Bstatic $(STATICGLIB) -Wl,-Bdynamic
 
 GLUICFLAGS+=`pkg-config --cflags cairo pango` $(CFLAGS)
-GLUILIBS+=`pkg-config $(PKG_UI_FLAGS) --libs cairo pango pangocairo $(PKG_GL_LIBS)`
+STATICCAIRONAME=libcairo.a
+STATICCAIRO=$(STATICDIR)$(STATICCAIRONAME)
+STATICPANGONAME=libpango-1.0.a
+STATICPANGO=$(STATICDIR)$(STATICPANGONAME)
+STATICPANGOCAIRONAME=libpangocairo-1.0.a
+STATICPANGOCAIRO=$(STATICDIR)$(STATICPANGOCAIRONAME)
+GLUILIBS += -Wl,-Bstatic $(STATICCAIRO) $(STATICPANGO) $(STATICPANGOCAIRO) -Wl,-Bdynamic
+#orig:GLUILIBS+=`pkg-config $(PKG_UI_FLAGS) --libs cairo pango pangocairo $(PKG_GL_LIBS)`
+GLUILIBS+=`pkg-config $(PKG_UI_FLAGS) --libs $(PKG_GL_LIBS)`
 
 ifneq ($(XWIN),)
 GLUILIBS+=-lpthread -lusp10
@@ -266,13 +278,37 @@ CPPFLAGS += -Ifluidsynth -I fluidsynth/fluidsynth -DHAVE_CONFIG_H -D DEFAULT_SOU
 DSP_SRC  = src/$(LV2NAME).c $(FLUID_SRC)
 DSP_DEPS = $(DSP_SRC) src/$(LV2NAME).h src/midnam.h
 GUI_DEPS = gui/$(LV2NAME).c src/$(LV2NAME).h
+STATIC_DEPS = $(STATICGLIB) $(STATICCAIRO) $(STATICPANGO) $(STATICPANGOCAIRO)
 
-$(BUILDDIR)$(LV2NAME)$(LIB_EXT): $(DSP_DEPS) Makefile
+$(BUILDDIR)$(LV2NAME)$(LIB_EXT): $(DSP_DEPS) $(STATIC_DEPS) Makefile
 	@mkdir -p $(BUILDDIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) $(LIC_CFLAGS) -std=gnu99 \
 	  -o $(BUILDDIR)$(LV2NAME)$(LIB_EXT) $(DSP_SRC) \
 	  -shared $(LV2LDFLAGS) $(LDFLAGS) $(LOADLIBES) $(LIC_LOADLIBES)
 	$(STRIP) $(STRIPFLAGS) $(BUILDDIR)$(LV2NAME)$(LIB_EXT)
+
+$(STATICGLIB): $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICGLIBNAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICCAIRO): $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICCAIRONAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICPANGO): $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICPANGONAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICPANGOCAIRO): $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICPANGOCAIRONAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICDIR):
+	mkdir -p $(STATICDIR)
 
 ifneq ($(BUILDOPENGL), no)
  -include $(RW)robtk.mk
@@ -314,6 +350,7 @@ clean:
 	  $(BUILDDIR)$(LV2NAME)$(LIB_EXT) \
 	  $(BUILDDIR)$(LV2GUI)$(LIB_EXT) \
 	  $(BUILDDIR)*.sf2
+	rm -rf $(STATICDIR)
 	rm -rf $(BUILDDIR)*.dSYM
 	rm -rf $(APPBLD)x42-*
 	-test -d $(APPBLD) && rmdir $(APPBLD) || true
