@@ -157,22 +157,24 @@ else
 override CFLAGS += -DPTW32_STATIC_LIB
 endif
 
-STATICDIR=staticdir/
-STATICGLIBNAME=libglib-2.0.a
-STATICGLIB=$(STATICDIR)$(STATICGLIBNAME)
+STATICDIR:=staticdir/
+STATICGLIBNAME:=libglib-2.0.a
+STATICGLIB:=$(STATICDIR)$(STATICGLIBNAME)
 #orig:override LOADLIBES += `pkg-config $(PKG_UI_FLAGS) --libs glib-2.0`
 override LOADLIBES += -Wl,--strip-discarded -Wl,-Bstatic $(STATICGLIB) -Wl,-Bdynamic
 
 GLUICFLAGS+=`pkg-config --cflags cairo pango` $(CFLAGS)
-STATICCAIRONAME=libcairo.a
-STATICCAIRO=$(STATICDIR)$(STATICCAIRONAME)
-STATICPANGONAME=libpango-1.0.a
-STATICPANGO=$(STATICDIR)$(STATICPANGONAME)
-STATICPANGOCAIRONAME=libpangocairo-1.0.a
-STATICPANGOCAIRO=$(STATICDIR)$(STATICPANGOCAIRONAME)
+STATICCAIRONAME:=libcairo.a
+STATICCAIRO:=$(STATICDIR)$(STATICCAIRONAME)
+STATICPANGONAME:=libpango-1.0.a
+STATICPANGO:=$(STATICDIR)$(STATICPANGONAME)
+STATICPANGOCAIRONAME:=libpangocairo-1.0.a
+STATICPANGOCAIRO:=$(STATICDIR)$(STATICPANGOCAIRONAME)
 GLUILIBS += -Wl,-Bstatic $(STATICCAIRO) $(STATICPANGO) $(STATICPANGOCAIRO) -Wl,-Bdynamic
 #orig:GLUILIBS+=`pkg-config $(PKG_UI_FLAGS) --libs cairo pango pangocairo $(PKG_GL_LIBS)`
 GLUILIBS+=`pkg-config $(PKG_UI_FLAGS) --libs $(PKG_GL_LIBS)`
+
+STATIC_DEPS := $(STATICGLIB) $(STATICCAIRO) $(STATICPANGO) $(STATICPANGOCAIRO)
 
 ifneq ($(XWIN),)
 GLUILIBS+=-lpthread -lusp10
@@ -278,30 +280,6 @@ CPPFLAGS += -Ifluidsynth -I fluidsynth/fluidsynth -DHAVE_CONFIG_H -D DEFAULT_SOU
 DSP_SRC  = src/$(LV2NAME).c $(FLUID_SRC)
 DSP_DEPS = $(DSP_SRC) src/$(LV2NAME).h src/midnam.h
 GUI_DEPS = gui/$(LV2NAME).c src/$(LV2NAME).h
-$(STATICGLIB): $(STATICDIR)
-	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICGLIBNAME) | head -n1) $@
-	strip -s $@
-	ranlib $@
-
-$(STATICCAIRO): $(STATICDIR)
-	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICCAIRONAME) | head -n1) $@
-	strip -s $@
-	ranlib $@
-
-$(STATICPANGO): $(STATICDIR)
-	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICPANGONAME) | head -n1) $@
-	strip -s $@
-	ranlib $@
-
-$(STATICPANGOCAIRO): $(STATICDIR)
-	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICPANGOCAIRONAME) | head -n1) $@
-	strip -s $@
-	ranlib $@
-
-$(STATICDIR):
-	mkdir -p $(STATICDIR)
-
-STATIC_DEPS = $(STATICGLIB) $(STATICCAIRO) $(STATICPANGO) $(STATICPANGOCAIRO)
 
 $(BUILDDIR)$(LV2NAME)$(LIB_EXT): $(DSP_DEPS) $(STATIC_DEPS) Makefile
 	@mkdir -p $(BUILDDIR)
@@ -309,6 +287,30 @@ $(BUILDDIR)$(LV2NAME)$(LIB_EXT): $(DSP_DEPS) $(STATIC_DEPS) Makefile
 	  -o $(BUILDDIR)$(LV2NAME)$(LIB_EXT) $(DSP_SRC) \
 	  -shared $(LV2LDFLAGS) $(LDFLAGS) $(LOADLIBES) $(LIC_LOADLIBES)
 	$(STRIP) $(STRIPFLAGS) $(BUILDDIR)$(LV2NAME)$(LIB_EXT)
+
+$(STATICGLIB):
+	@mkdir -p $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICGLIBNAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICCAIRO):
+	@mkdir -p $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICCAIRONAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICPANGO):
+	@mkdir -p $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICPANGONAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
+
+$(STATICPANGOCAIRO):
+	@mkdir -p $(STATICDIR)
+	cp $(shell find /usr/lib 2> /dev/null | grep $(STATICPANGOCAIRONAME) | head -n1) $@
+	strip -s $@
+	ranlib $@
 
 ifneq ($(BUILDOPENGL), no)
  -include $(RW)robtk.mk
